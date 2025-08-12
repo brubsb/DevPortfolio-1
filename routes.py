@@ -1,8 +1,19 @@
-from flask import render_template, request, jsonify, flash, redirect, url_for
+from flask import render_template, request, jsonify, flash, redirect, url_for, abort, session
+from flask_login import login_user, logout_user, login_required, current_user
 from app import app, db
-from models import Project, Skill, Experience, Contact
-from forms import ContactForm
+from models import Project, Skill, Experience, Contact, User, ProjectLike, ProjectComment
+from forms import ContactForm, LoginForm, RegisterForm, CommentForm
+from functools import wraps
 import logging
+
+def admin_required(f):
+    """Decorator to require admin access"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or not current_user.is_admin:
+            abort(403)
+        return f(*args, **kwargs)
+    return decorated_function
 
 @app.route('/')
 def index():
@@ -207,3 +218,203 @@ def create_sample_data():
         
         db.session.commit()
         logging.info("Sample data created successfully")
+
+# Authentication Routes
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    """User login"""
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        
+        if user and user.check_password(form.password.data):
+            login_user(user, remember=form.remember_me.data)
+            next_page = request.args.get('next')
+            flash(f'Bem-vindo, {user.full_name}!', 'success')
+            return redirect(next_page) if next_page else redirect(url_for('index'))
+        else:
+            flash('Nome de usuário ou senha incorretos.', 'error')
+    
+    return render_template('auth/login.html', form=form)
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    """User registration"""
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    
+    form = RegisterForm()
+    if form.validate_on_submit():
+        user = User(
+            username=form.username.data,
+            email=form.email.data,
+            full_name=form.full_name.data
+        )
+        user.set_password(form.password.data)
+        
+        db.session.add(user)
+        db.session.commit()
+        
+        flash('Cadastro realizado com sucesso! Faça login para continuar.', 'success')
+        return redirect(url_for('login'))
+    
+    return render_template('auth/register.html', form=form)
+
+@app.route('/logout')
+@login_required
+def logout():
+    """User logout"""
+    logout_user()
+    flash('Você foi desconectado.', 'info')
+    return redirect(url_for('index'))
+
+# Project interaction routes
+@app.route('/project/<int:project_id>/like', methods=['POST'])
+@login_required
+def toggle_like(project_id):
+    """Toggle project like"""
+    project = Project.query.get_or_404(project_id)
+    
+    existing_like = ProjectLike.query.filter_by(
+        user_id=current_user.id, 
+        project_id=project_id
+    ).first()
+    
+    if existing_like:
+        db.session.delete(existing_like)
+        liked = False
+    else:
+        new_like = ProjectLike(user_id=current_user.id, project_id=project_id)
+        db.session.add(new_like)
+        liked = True
+    
+    db.session.commit()
+    
+    return jsonify({
+        'liked': liked,
+        'likes_count': project.likes_count
+    })
+
+@app.route('/project/<int:project_id>/comment', methods=['POST'])
+@login_required
+def add_comment(project_id):
+    """Add project comment"""
+    project = Project.query.get_or_404(project_id)
+    form = CommentForm()
+    
+    if form.validate_on_submit():
+        comment = ProjectComment(
+            user_id=current_user.id,
+            project_id=project_id,
+            content=form.content.data
+        )
+        
+        db.session.add(comment)
+        db.session.commit()
+        
+        flash('Comentário adicionado com sucesso!', 'success')
+    else:
+        for error in form.content.errors:
+            flash(error, 'error')
+    
+    return redirect(url_for('index') + f'#project-{project_id}')
+
+@app.route('/project/<int:project_id>')
+def project_detail(project_id):
+    """Project detail page with comments"""
+    project = Project.query.get_or_404(project_id)
+    comments = ProjectComment.query.filter_by(
+        project_id=project_id, 
+        is_approved=True
+    ).order_by(ProjectComment.created_at.desc()).all()
+    
+    comment_form = CommentForm()
+    
+    return render_template('project_detail.html', 
+                         project=project, 
+                         comments=comments, 
+                         comment_form=comment_form)
+
+# Admin Routes
+@app.route('/admin')
+@login_required
+@admin_required
+def admin_dashboard():
+    """Admin dashboard"""
+    # Get statistics
+    stats = {
+        'projects': Project.query.count(),
+        'users': User.query.count(),
+        'contacts': Contact.query.filter_by(is_read=False).count(),
+        'comments': ProjectComment.query.filter_by(is_approved=False).count()
+    }
+    
+    return render_template('admin/dashboard.html', stats=stats)
+
+@app.route('/admin/projects')
+@login_required
+@admin_required
+def admin_projects():
+    """Admin projects management"""
+    projects = Project.query.order_by(Project.created_at.desc()).all()
+    return render_template('admin/projects.html', projects=projects)
+
+@app.route('/admin/users')
+@login_required
+@admin_required
+def admin_users():
+    """Admin users management"""
+    users = User.query.order_by(User.created_at.desc()).all()
+    return render_template('admin/users.html', users=users)
+
+@app.route('/admin/contacts')
+@login_required
+@admin_required
+def admin_contacts():
+    """Admin contacts management"""
+    contacts = Contact.query.order_by(Contact.created_at.desc()).all()
+    return render_template('admin/contacts.html', contacts=contacts)
+
+@app.route('/admin/contact/<int:contact_id>/mark_read')
+@login_required
+@admin_required
+def mark_contact_read(contact_id):
+    """Mark contact as read"""
+    contact = Contact.query.get_or_404(contact_id)
+    contact.is_read = True
+    db.session.commit()
+    flash('Mensagem marcada como lida.', 'success')
+    return redirect(url_for('admin_contacts'))
+
+@app.route('/admin/comment/<int:comment_id>/approve')
+@login_required
+@admin_required
+def approve_comment(comment_id):
+    """Approve comment"""
+    comment = ProjectComment.query.get_or_404(comment_id)
+    comment.is_approved = True
+    db.session.commit()
+    flash('Comentário aprovado.', 'success')
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin/create_admin')
+def create_admin_user():
+    """Create admin user (development only)"""
+    if User.query.filter_by(is_admin=True).first():
+        return "Admin user already exists"
+    
+    admin = User(
+        username='admin',
+        email='admin@portfolio.com',
+        full_name='Administrator',
+        is_admin=True
+    )
+    admin.set_password('admin123')
+    
+    db.session.add(admin)
+    db.session.commit()
+    
+    return "Admin user created! Username: admin, Password: admin123"

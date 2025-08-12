@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Portfolio{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Admin Header -->
+            <div class="col-12">
+                <div class="admin-header mb-4">
+                    <h1 class="gradient-text">Dashboard Administrativo</h1>
+                    <p class="text-secondary">Gerencie seu portfolio e monitore atividades</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="stat-card glass-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-folder text-primary"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ stats.projects }}</h3>
+                        <p>Projetos</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="stat-card glass-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users text-success"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ stats.users }}</h3>
+                        <p>Usuários</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="stat-card glass-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-envelope text-warning"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ stats.contacts }}</h3>
+                        <p>Mensagens Não Lidas</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="stat-card glass-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-comment text-info"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ stats.comments }}</h3>
+                        <p>Comentários Pendentes</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="row">
+            <div class="col-12">
+                <div class="admin-actions glass-card">
+                    <h4 class="mb-3">Ações Rápidas</h4>
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <a href="{{ url_for('admin_projects') }}" class="btn btn-primary w-100">
+                                <i class="fas fa-folder me-2"></i>
+                                Gerenciar Projetos
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <a href="{{ url_for('admin_users') }}" class="btn btn-success w-100">
+                                <i class="fas fa-users me-2"></i>
+                                Gerenciar Usuários
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <a href="{{ url_for('admin_contacts') }}" class="btn btn-warning w-100">
+                                <i class="fas fa-envelope me-2"></i>
+                                Ver Mensagens
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <a href="{{ url_for('index') }}" class="btn btn-info w-100">
+                                <i class="fas fa-eye me-2"></i>
+                                Ver Site
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.admin-container {
+    min-height: 100vh;
+    padding: 100px 0 50px 0;
+    background: linear-gradient(135deg, var(--background-primary) 0%, var(--background-secondary) 100%);
+}
+
+.admin-header {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.stat-card {
+    padding: 30px 20px;
+    text-align: center;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.stat-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.stat-info h3 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.stat-info p {
+    color: var(--text-secondary);
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.admin-actions {
+    padding: 30px;
+    border-radius: 20px;
+}
+
+.admin-actions h4 {
+    color: var(--text-primary);
+}
+
+.btn {
+    padding: 15px 20px;
+    border-radius: 12px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+</style>
+{% endblock %}

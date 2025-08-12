@@ -147,81 +147,114 @@
             </div>
         </div>
         
-        <div class="row">
-            <!-- Frontend Skills -->
-            <div class="col-lg-4 mb-5" data-aos="fade-up" data-aos-delay="100">
-                <div class="skills-category">
-                    <div class="category-header">
-                        <i class="fas fa-palette text-primary"></i>
-                        <h4>Frontend</h4>
-                    </div>
-                    <div class="skills-list">
-                        {% for skill in frontend_skills %}
-                        <div class="skill-item">
-                            <div class="skill-header">
-                                <span class="skill-name">
-                                    <i class="{{ skill.icon_class }}"></i>
-                                    {{ skill.name }}
-                                </span>
-                                <span class="skill-percentage">{{ skill.proficiency }}%</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" data-progress="{{ skill.proficiency }}"></div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Backend Skills -->
-            <div class="col-lg-4 mb-5" data-aos="fade-up" data-aos-delay="200">
-                <div class="skills-category">
-                    <div class="category-header">
-                        <i class="fas fa-server text-primary"></i>
-                        <h4>Backend</h4>
-                    </div>
-                    <div class="skills-list">
-                        {% for skill in backend_skills %}
-                        <div class="skill-item">
-                            <div class="skill-header">
-                                <span class="skill-name">
-                                    <i class="{{ skill.icon_class }}"></i>
-                                    {{ skill.name }}
-                                </span>
-                                <span class="skill-percentage">{{ skill.proficiency }}%</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" data-progress="{{ skill.proficiency }}"></div>
+        <!-- Skills Carousel -->
+        <div class="row" data-aos="fade-up" data-aos-delay="200">
+            <div class="col-lg-12">
+                <div id="skillsCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+                    <div class="carousel-inner">
+                        <!-- Frontend Skills Slide -->
+                        <div class="carousel-item active">
+                            <div class="skills-carousel-slide">
+                                <div class="skills-category-header text-center mb-4">
+                                    <i class="fas fa-palette text-primary"></i>
+                                    <h3 class="category-title">Frontend Development</h3>
+                                    <p class="category-subtitle">Criando interfaces modernas e interativas</p>
+                                </div>
+                                <div class="skills-grid">
+                                    {% for skill in frontend_skills %}
+                                    <div class="skill-card glass-card">
+                                        <div class="skill-icon">
+                                            <i class="{{ skill.icon_class }}"></i>
+                                        </div>
+                                        <h5 class="skill-name">{{ skill.name }}</h5>
+                                        <div class="skill-level">
+                                            <div class="level-indicator level-{{ (skill.proficiency // 20) + 1 }}">
+                                                {% for i in range(5) %}
+                                                <div class="dot {{ 'filled' if i < (skill.proficiency // 20) else '' }}"></div>
+                                                {% endfor %}
+                                            </div>
+                                            <span class="level-text">{{ skill.proficiency }}%</span>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
                             </div>
                         </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Tools Skills -->
-            <div class="col-lg-4 mb-5" data-aos="fade-up" data-aos-delay="300">
-                <div class="skills-category">
-                    <div class="category-header">
-                        <i class="fas fa-tools text-primary"></i>
-                        <h4>Ferramentas</h4>
-                    </div>
-                    <div class="skills-list">
-                        {% for skill in tools_skills %}
-                        <div class="skill-item">
-                            <div class="skill-header">
-                                <span class="skill-name">
-                                    <i class="{{ skill.icon_class }}"></i>
-                                    {{ skill.name }}
-                                </span>
-                                <span class="skill-percentage">{{ skill.proficiency }}%</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" data-progress="{{ skill.proficiency }}"></div>
+                        
+                        <!-- Backend Skills Slide -->
+                        <div class="carousel-item">
+                            <div class="skills-carousel-slide">
+                                <div class="skills-category-header text-center mb-4">
+                                    <i class="fas fa-server text-primary"></i>
+                                    <h3 class="category-title">Backend Development</h3>
+                                    <p class="category-subtitle">Construindo APIs robustas e escaláveis</p>
+                                </div>
+                                <div class="skills-grid">
+                                    {% for skill in backend_skills %}
+                                    <div class="skill-card glass-card">
+                                        <div class="skill-icon">
+                                            <i class="{{ skill.icon_class }}"></i>
+                                        </div>
+                                        <h5 class="skill-name">{{ skill.name }}</h5>
+                                        <div class="skill-level">
+                                            <div class="level-indicator level-{{ (skill.proficiency // 20) + 1 }}">
+                                                {% for i in range(5) %}
+                                                <div class="dot {{ 'filled' if i < (skill.proficiency // 20) else '' }}"></div>
+                                                {% endfor %}
+                                            </div>
+                                            <span class="level-text">{{ skill.proficiency }}%</span>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
                             </div>
                         </div>
-                        {% endfor %}
+                        
+                        <!-- Tools Skills Slide -->
+                        <div class="carousel-item">
+                            <div class="skills-carousel-slide">
+                                <div class="skills-category-header text-center mb-4">
+                                    <i class="fas fa-tools text-primary"></i>
+                                    <h3 class="category-title">Ferramentas & DevOps</h3>
+                                    <p class="category-subtitle">Otimizando fluxo de desenvolvimento</p>
+                                </div>
+                                <div class="skills-grid">
+                                    {% for skill in tools_skills %}
+                                    <div class="skill-card glass-card">
+                                        <div class="skill-icon">
+                                            <i class="{{ skill.icon_class }}"></i>
+                                        </div>
+                                        <h5 class="skill-name">{{ skill.name }}</h5>
+                                        <div class="skill-level">
+                                            <div class="level-indicator level-{{ (skill.proficiency // 20) + 1 }}">
+                                                {% for i in range(5) %}
+                                                <div class="dot {{ 'filled' if i < (skill.proficiency // 20) else '' }}"></div>
+                                                {% endfor %}
+                                            </div>
+                                            <span class="level-text">{{ skill.proficiency }}%</span>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Carousel Controls -->
+                    <button class="carousel-control-prev" type="button" data-bs-target="#skillsCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Anterior</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#skillsCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Próximo</span>
+                    </button>
+                    
+                    <!-- Carousel Indicators -->
+                    <div class="carousel-indicators">
+                        <button type="button" data-bs-target="#skillsCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Frontend"></button>
+                        <button type="button" data-bs-target="#skillsCarousel" data-bs-slide-to="1" aria-label="Backend"></button>
+                        <button type="button" data-bs-target="#skillsCarousel" data-bs-slide-to="2" aria-label="Tools"></button>
                     </div>
                 </div>
             </div>
@@ -281,8 +314,70 @@
                             <span class="tech-tag">{{ tech.strip() }}</span>
                             {% endfor %}
                         </div>
+                        
+                        <!-- Project Interactions -->
+                        <div class="portfolio-interactions mt-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="project-stats">
+                                    <span class="like-count">{{ project.likes_count }} curtida{{ 's' if project.likes_count != 1 else '' }}</span>
+                                </div>
+                                
+                                {% if current_user.is_authenticated %}
+                                <div class="interaction-buttons">
+                                    <button class="btn btn-sm like-btn {{ 'liked' if project.is_liked_by(current_user) else '' }}" 
+                                            data-project-id="{{ project.id }}" 
+                                            onclick="toggleLike({{ project.id }})">
+                                        <i class="fas fa-heart"></i>
+                                        <span class="like-text">{{ 'Descurtir' if project.is_liked_by(current_user) else 'Curtir' }}</span>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-primary ms-2" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#commentModal{{ project.id }}">
+                                        <i class="fas fa-comment"></i> Comentar
+                                    </button>
+                                </div>
+                                {% else %}
+                                <div class="interaction-info">
+                                    <small class="text-muted">
+                                        <a href="{{ url_for('login') }}" class="text-decoration-none">Faça login</a> para curtir e comentar
+                                    </small>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
                 </div>
+                
+                <!-- Comment Modal -->
+                {% if current_user.is_authenticated %}
+                <div class="modal fade" id="commentModal{{ project.id }}" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content glass-card">
+                            <div class="modal-header border-0">
+                                <h5 class="modal-title">Comentar - {{ project.title }}</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="POST" action="{{ url_for('add_comment', project_id=project.id) }}">
+                                    <div class="form-group mb-3">
+                                        <textarea class="form-control glass-input" 
+                                                name="content" 
+                                                rows="4" 
+                                                placeholder="Escreva seu comentário..."
+                                                required
+                                                minlength="5"
+                                                maxlength="500"></textarea>
+                                    </div>
+                                    <div class="text-end">
+                                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+                                        <button type="submit" class="btn btn-primary">Comentar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
             </div>
             {% endfor %}
         </div>
@@ -417,4 +512,238 @@
         </div>
     </div>
 </section>
+
+<!-- Additional JavaScript -->
+<script>
+// Toggle like function
+function toggleLike(projectId) {
+    fetch(`/project/${projectId}/like`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const likeBtn = document.querySelector(`[data-project-id="${projectId}"]`);
+        const likeCount = likeBtn.closest('.portfolio-card').querySelector('.like-count');
+        const likeText = likeBtn.querySelector('.like-text');
+        
+        if (data.liked) {
+            likeBtn.classList.add('liked');
+            likeText.textContent = 'Descurtir';
+        } else {
+            likeBtn.classList.remove('liked');
+            likeText.textContent = 'Curtir';
+        }
+        
+        likeCount.textContent = `${data.likes_count} curtida${data.likes_count !== 1 ? 's' : ''}`;
+    })
+    .catch(error => {
+        console.error('Erro ao curtir projeto:', error);
+        alert('Erro ao processar sua ação. Tente novamente.');
+    });
+}
+</script>
+
+<style>
+/* Portfolio interaction styles */
+.portfolio-interactions {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 15px;
+}
+
+.like-btn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+}
+
+.like-btn:hover {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.like-btn.liked {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.like-btn.liked:hover {
+    background: var(--primary-dark);
+}
+
+.project-stats {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.interaction-info small {
+    color: var(--text-muted);
+}
+
+.glass-dropdown {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    box-shadow: var(--shadow-medium);
+}
+
+.glass-dropdown .dropdown-item {
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+.glass-dropdown .dropdown-item:hover {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--primary-color);
+}
+
+/* Skills Carousel Styles */
+.skills-carousel-slide {
+    padding: 40px 20px;
+}
+
+.skills-category-header .category-title {
+    color: var(--text-primary);
+    font-size: 2rem;
+    margin: 20px 0 10px 0;
+}
+
+.skills-category-header .category-subtitle {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.skill-card {
+    padding: 30px 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    border-radius: 20px;
+}
+
+.skill-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(59, 130, 246, 0.2);
+}
+
+.skill-icon {
+    font-size: 3rem;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.skill-name {
+    color: var(--text-primary);
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.skill-level {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.level-indicator {
+    display: flex;
+    gap: 8px;
+}
+
+.level-indicator .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.level-indicator .dot.filled {
+    background: var(--primary-color);
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+}
+
+.level-text {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Custom Carousel Controls */
+.carousel-control-prev,
+.carousel-control-next {
+    width: 50px;
+    height: 50px;
+    background: var(--glass-bg);
+    border-radius: 50%;
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.carousel-control-prev {
+    left: -60px;
+}
+
+.carousel-control-next {
+    right: -60px;
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+    background: var(--primary-color);
+}
+
+.carousel-indicators {
+    bottom: -50px;
+}
+
+.carousel-indicators button {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    border: none;
+    margin: 0 5px;
+}
+
+.carousel-indicators button.active {
+    background: var(--primary-color);
+}
+
+@media (max-width: 768px) {
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .carousel-control-prev {
+        left: -30px;
+    }
+    
+    .carousel-control-next {
+        right: -30px;
+    }
+    
+    .skills-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}
+</style>
 {% endblock %}
