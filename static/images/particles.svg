@@ -1,0 +1,41 @@
+<svg width="200" height="100" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Animated particles for background -->
+  <circle cx="20" cy="30" r="2" fill="#3b82f6" opacity="0.3">
+    <animate attributeName="opacity" values="0.3;0.8;0.3" dur="3s" repeatCount="indefinite"/>
+  </circle>
+  
+  <circle cx="40" cy="70" r="1.5" fill="#60a5fa" opacity="0.2">
+    <animate attributeName="opacity" values="0.2;0.6;0.2" dur="4s" repeatCount="indefinite"/>
+  </circle>
+  
+  <circle cx="90" cy="40" r="1" fill="#3b82f6" opacity="0.4">
+    <animate attributeName="opacity" values="0.4;0.9;0.4" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  
+  <circle cx="130" cy="80" r="2" fill="#60a5fa" opacity="0.3">
+    <animate attributeName="opacity" values="0.3;0.7;0.3" dur="5s" repeatCount="indefinite"/>
+  </circle>
+  
+  <circle cx="170" cy="20" r="1.5" fill="#3b82f6" opacity="0.2">
+    <animate attributeName="opacity" values="0.2;0.8;0.2" dur="3.5s" repeatCount="indefinite"/>
+  </circle>
+  
+  <!-- Moving particles -->
+  <circle cx="0" cy="50" r="1" fill="#3b82f6" opacity="0.4">
+    <animateTransform 
+      attributeName="transform" 
+      type="translate" 
+      values="0,0; 200,0; 0,0" 
+      dur="10s" 
+      repeatCount="indefinite"/>
+  </circle>
+  
+  <circle cx="50" cy="20" r="1.5" fill="#60a5fa" opacity="0.3">
+    <animateTransform 
+      attributeName="transform" 
+      type="translate" 
+      values="0,0; 0,80; 0,0" 
+      dur="8s" 
+      repeatCount="indefinite"/>
+  </circle>
+</svg>
