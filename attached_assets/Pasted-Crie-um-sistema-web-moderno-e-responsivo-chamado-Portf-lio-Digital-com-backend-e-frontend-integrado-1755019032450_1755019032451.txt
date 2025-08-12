@@ -1,0 +1,115 @@
+Crie um sistema web moderno e responsivo chamado Portfólio Digital, com backend e frontend integrados, que atenda aos seguintes requisitos:
+
+Objetivo Geral
+Desenvolver um portfólio digital profissional para um único proprietário (administrador), onde visitantes possam visualizar conquistas, projetos e experiências, interagir com curtidas e comentários, e compartilhar no LinkedIn. O sistema deve ter área administrativa, área pública e autenticação de usuários visitantes.
+
+Tecnologias
+
+Frontend: React (com Vite ou Next.js, escolha o mais indicado para SEO e SSR), usando Tailwind CSS para estilização responsiva.
+
+Backend: Node.js com Express.
+
+Banco de Dados: MongoDB (Mongoose ORM).
+
+Autenticação: JWT para sessões, bcrypt para hash de senha.
+
+Upload de arquivos: Multer para imagens e vídeos.
+
+Integração externa: API do LinkedIn para compartilhamento de publicações.
+
+Notificações em tempo real: Socket.io para avisar o administrador sobre novos comentários.
+
+Funcionalidades
+
+Área Administrativa (Proprietário)
+
+Login exclusivo do administrador.
+
+CRUD completo para projetos e conquistas.
+
+Upload de imagens, vídeos e links de demonstração.
+
+Organização por categorias e tags.
+
+Opção de publicar ou salvar como rascunho.
+
+Painel com estatísticas (total de curtidas, comentários e projetos mais populares).
+
+Área Pública (Visitantes)
+
+Listagem de projetos e conquistas com paginação.
+
+Botão de curtir com contador.
+
+Campo para comentários (somente para usuários logados).
+
+Compartilhamento no LinkedIn com título, descrição e imagem pré-definidos.
+
+Página inicial com destaques (últimos adicionados ou mais curtidos).
+
+Autenticação de Visitantes
+
+Cadastro com nome, e-mail, senha e foto de perfil.
+
+Login com JWT.
+
+Recuperação de senha via e-mail.
+
+Página de perfil do visitante com foto e informações.
+
+Funcionalidades Extras
+
+Notificação em tempo real para o administrador quando houver novo comentário.
+
+Página "Sobre Mim" com foto, descrição e links de redes sociais.
+
+Design moderno e responsivo, com modo claro e escuro.
+
+Layout otimizado para mobile e desktop.
+
+Estrutura de Pastas Sugerida
+
+bash
+Copiar
+Editar
+/backend
+  /models
+  /routes
+  /controllers
+  /middlewares
+  server.js
+
+/frontend
+  /src
+    /components
+    /pages
+    /services
+    /styles
+Regras
+
+Código limpo, modular e documentado.
+
+Comentar cada função e rota.
+
+Implementar proteção de rotas no frontend e backend.
+
+Garantir que o layout seja responsivo usando breakpoints do Tailwind.
+
+Usar ícones e animações leves para visual moderno.
+
+Entregáveis
+
+Backend funcional com API REST.
+
+Frontend conectado ao backend.
+
+Documentação mínima com:
+
+Passos para instalar e rodar.
+
+Estrutura das rotas.
+
+Explicação de autenticação.
+
+Gere o código completo do projeto com essas funcionalidades, incluindo backend e frontend integrados, pronto para rodar com npm install e npm run dev.
+Adicione comentários no código explicando cada parte importante.
