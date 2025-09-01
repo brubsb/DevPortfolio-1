@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SubmitField, PasswordField, BooleanField
-from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError
+from flask_wtf.file import FileField, FileAllowed
+from wtforms import StringField, TextAreaField, SubmitField, PasswordField, BooleanField, SelectField, IntegerField
+from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError, Optional, URL
 from models import User
 
 class ContactForm(FlaskForm):
@@ -90,3 +91,88 @@ class CommentForm(FlaskForm):
     ])
     
     submit = SubmitField('Comentar')
+
+class ProjectForm(FlaskForm):
+    """Form for creating and editing projects"""
+    title = StringField('Título', validators=[
+        DataRequired(message='Título é obrigatório'),
+        Length(min=5, max=100, message='Título deve ter entre 5 e 100 caracteres')
+    ])
+    
+    short_description = StringField('Descrição Curta', validators=[
+        DataRequired(message='Descrição curta é obrigatória'),
+        Length(min=10, max=200, message='Descrição curta deve ter entre 10 e 200 caracteres')
+    ])
+    
+    description = TextAreaField('Descrição Completa', validators=[
+        DataRequired(message='Descrição completa é obrigatória'),
+        Length(min=50, max=2000, message='Descrição deve ter entre 50 e 2000 caracteres')
+    ])
+    
+    technologies = StringField('Tecnologias', validators=[
+        DataRequired(message='Tecnologias são obrigatórias'),
+        Length(min=5, max=500, message='Tecnologias deve ter entre 5 e 500 caracteres')
+    ], description='Separe as tecnologias por vírgula (ex: React, Node.js, MongoDB)')
+    
+    category = SelectField('Categoria', choices=[
+        ('frontend', 'Frontend'),
+        ('backend', 'Backend'),
+        ('fullstack', 'Full Stack'),
+        ('mobile', 'Mobile'),
+        ('design', 'Design')
+    ], validators=[DataRequired(message='Categoria é obrigatória')])
+    
+    github_url = StringField('URL do GitHub', validators=[
+        Optional(),
+        URL(message='URL do GitHub inválida'),
+        Length(max=200, message='URL muito longa')
+    ])
+    
+    live_url = StringField('URL do Projeto', validators=[
+        Optional(),
+        URL(message='URL do projeto inválida'),
+        Length(max=200, message='URL muito longa')
+    ])
+    
+    image = FileField('Imagem do Projeto', validators=[
+        Optional(),
+        FileAllowed(['jpg', 'jpeg', 'png', 'gif', 'webp'], 'Apenas imagens são permitidas!')
+    ])
+    
+    featured = BooleanField('Projeto em Destaque')
+    
+    order_priority = IntegerField('Prioridade', validators=[
+        Optional()
+    ], default=0, description='Maior número = maior prioridade')
+    
+    submit = SubmitField('Salvar Projeto')
+
+class SkillForm(FlaskForm):
+    """Form for creating and editing skills"""
+    name = StringField('Nome da Habilidade', validators=[
+        DataRequired(message='Nome da habilidade é obrigatório'),
+        Length(min=2, max=50, message='Nome deve ter entre 2 e 50 caracteres')
+    ])
+    
+    category = SelectField('Categoria', choices=[
+        ('frontend', 'Frontend'),
+        ('backend', 'Backend'),
+        ('tools', 'Ferramentas'),
+        ('database', 'Banco de Dados'),
+        ('design', 'Design')
+    ], validators=[DataRequired(message='Categoria é obrigatória')])
+    
+    proficiency = IntegerField('Proficiência (%)', validators=[
+        DataRequired(message='Proficiência é obrigatória'),
+    ], description='Entre 1 e 100')
+    
+    icon_class = StringField('Classe do Ícone', validators=[
+        Optional(),
+        Length(max=50, message='Classe muito longa')
+    ], description='Ex: fab fa-react, fas fa-database')
+    
+    order_priority = IntegerField('Prioridade', validators=[
+        Optional()
+    ], default=0, description='Maior número = maior prioridade')
+    
+    submit = SubmitField('Salvar Habilidade')

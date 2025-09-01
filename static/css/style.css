@@ -978,6 +978,299 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ======================================
+   LOADING & ANIMATION ENHANCEMENTS
+====================================== */
+
+/* Loading Overlay */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(10, 14, 26, 0.8);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease;
+}
+
+.loading-spinner {
+  text-align: center;
+}
+
+.loading-spinner .spinner-border {
+  width: 3rem;
+  height: 3rem;
+  border-width: 4px;
+}
+
+/* Enhanced Animation Classes */
+.animate-in {
+  animation: slideInUp 0.6s ease forwards;
+}
+
+@keyframes slideInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes slideInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Like Button Animation */
+.like-btn {
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-fast);
+}
+
+.like-btn.liked {
+  background: var(--primary-color) !important;
+  color: white !important;
+  border-color: var(--primary-color) !important;
+}
+
+.like-btn.liked i {
+  animation: heartBeat 0.6s ease;
+}
+
+@keyframes heartBeat {
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(1.3); }
+  50% { transform: scale(1.1); }
+  75% { transform: scale(1.25); }
+}
+
+/* Portfolio Interaction Enhancements */
+.portfolio-interactions {
+  border-top: 1px solid var(--glass-border);
+  padding-top: 1rem;
+}
+
+.like-count {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.interaction-buttons .btn {
+  font-size: 0.85rem;
+  padding: 6px 12px;
+}
+
+/* Skill Cards Enhancement */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.skill-card {
+  padding: 2rem 1.5rem;
+  text-align: center;
+  transition: all var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+}
+
+.skill-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+  transition: left 0.6s ease;
+}
+
+.skill-card:hover::before {
+  left: 100%;
+}
+
+.skill-card:hover {
+  transform: translateY(-10px);
+  box-shadow: var(--shadow-hard);
+}
+
+.skill-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+}
+
+.skill-level {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.level-indicator {
+  display: flex;
+  gap: 3px;
+}
+
+.level-indicator .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--glass-border);
+  transition: all var(--transition-fast);
+}
+
+.level-indicator .dot.filled {
+  background: var(--primary-color);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+}
+
+.level-text {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+/* Admin Panel Enhancements */
+.admin-table {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.admin-table .table {
+  margin-bottom: 0;
+}
+
+.admin-table .table th {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: var(--glass-border);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.admin-table .table td {
+  border-color: var(--glass-border);
+  color: var(--text-secondary);
+  vertical-align: middle;
+}
+
+.admin-form .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.admin-form .form-control {
+  background: var(--glass-bg);
+  border: 2px solid var(--glass-border);
+  color: var(--text-primary);
+  border-radius: 12px;
+}
+
+.admin-form .form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+}
+
+/* Project Cards Enhanced */
+.portfolio-card {
+  position: relative;
+  transition: all var(--transition-normal);
+}
+
+.portfolio-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent, rgba(59, 130, 246, 0.05), transparent);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+  pointer-events: none;
+}
+
+.portfolio-card:hover::after {
+  opacity: 1;
+}
+
+/* Enhanced Tooltips */
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]:hover::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--background-secondary);
+  color: var(--text-primary);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  z-index: 1000;
+  border: 1px solid var(--glass-border);
+  animation: fadeIn 0.3s ease;
+}
+
+/* Pulse Animation for CTAs */
+.pulse-animation {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+}
+
+/* ======================================
    RESPONSIVE DESIGN
 ====================================== */
 @media (max-width: 1199.98px) {

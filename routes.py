@@ -2,9 +2,13 @@ from flask import render_template, request, jsonify, flash, redirect, url_for, a
 from flask_login import login_user, logout_user, login_required, current_user
 from app import app, db
 from models import Project, Skill, Experience, Contact, User, ProjectLike, ProjectComment
-from forms import ContactForm, LoginForm, RegisterForm, CommentForm
+from forms import ContactForm, LoginForm, RegisterForm, CommentForm, ProjectForm, SkillForm
 from functools import wraps
 import logging
+import os
+import secrets
+from PIL import Image
+from werkzeug.utils import secure_filename
 
 def admin_required(f):
     """Decorator to require admin access"""
@@ -14,6 +18,54 @@ def admin_required(f):
             abort(403)
         return f(*args, **kwargs)
     return decorated_function
+
+def save_picture(form_picture, folder='projects'):
+    """Save uploaded picture and return filename"""
+    if not form_picture:
+        return None
+    
+    # Generate random filename
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(form_picture.filename)
+    picture_fn = random_hex + f_ext
+    
+    # Create upload folder if it doesn't exist
+    upload_folder = os.path.join(app.root_path, 'static', 'uploads', folder)
+    os.makedirs(upload_folder, exist_ok=True)
+    
+    picture_path = os.path.join(upload_folder, picture_fn)
+    
+    # Resize and save image
+    try:
+        img = Image.open(form_picture)
+        
+        # Resize image for optimization
+        if folder == 'projects':
+            output_size = (800, 600)
+        else:
+            output_size = (400, 400)
+            
+        # Convert to RGB if needed (for PNG with transparency)
+        if img.mode in ('RGBA', 'LA', 'P'):
+            img = img.convert('RGB')
+            
+        img.thumbnail(output_size, Image.Resampling.LANCZOS)
+        img.save(picture_path, 'JPEG', quality=90, optimize=True)
+        
+        return f'uploads/{folder}/{picture_fn}'
+    except Exception as e:
+        logging.error(f"Error processing image: {e}")
+        return None
+
+def delete_picture(picture_path):
+    """Delete picture file"""
+    if picture_path and picture_path.startswith('uploads/'):
+        try:
+            file_path = os.path.join(app.root_path, 'static', picture_path)
+            if os.path.exists(file_path):
+                os.remove(file_path)
+        except Exception as e:
+            logging.error(f"Error deleting image: {e}")
 
 @app.route('/')
 def index():
@@ -344,23 +396,191 @@ def project_detail(project_id):
 @admin_required
 def admin_dashboard():
     """Admin dashboard"""
-    # Get statistics
+    # Get comprehensive statistics
     stats = {
         'projects': Project.query.count(),
+        'featured_projects': Project.query.filter_by(featured=True).count(),
         'users': User.query.count(),
         'contacts': Contact.query.filter_by(is_read=False).count(),
-        'comments': ProjectComment.query.filter_by(is_approved=False).count()
+        'total_contacts': Contact.query.count(),
+        'comments': ProjectComment.query.filter_by(is_approved=False).count(),
+        'total_comments': ProjectComment.query.count(),
+        'total_likes': ProjectLike.query.count(),
+        'skills': Skill.query.count()
     }
     
-    return render_template('admin/dashboard.html', stats=stats)
+    # Get recent activity
+    recent_contacts = Contact.query.order_by(Contact.created_at.desc()).limit(5).all()
+    recent_comments = ProjectComment.query.order_by(ProjectComment.created_at.desc()).limit(5).all()
+    
+    # Get most liked projects
+    popular_projects = Project.query.join(ProjectLike).group_by(Project.id).order_by(
+        db.func.count(ProjectLike.id).desc()
+    ).limit(5).all()
+    
+    return render_template('admin/dashboard.html', 
+                         stats=stats,
+                         recent_contacts=recent_contacts,
+                         recent_comments=recent_comments,
+                         popular_projects=popular_projects)
 
 @app.route('/admin/projects')
 @login_required
 @admin_required
 def admin_projects():
     """Admin projects management"""
-    projects = Project.query.order_by(Project.created_at.desc()).all()
+    projects = Project.query.order_by(Project.order_priority.desc(), Project.created_at.desc()).all()
     return render_template('admin/projects.html', projects=projects)
+
+@app.route('/admin/projects/new', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def admin_new_project():
+    """Create new project"""
+    form = ProjectForm()
+    
+    if form.validate_on_submit():
+        # Handle image upload
+        image_url = None
+        if form.image.data:
+            image_url = save_picture(form.image.data, 'projects')
+        
+        project = Project(
+            title=form.title.data,
+            short_description=form.short_description.data,
+            description=form.description.data,
+            technologies=form.technologies.data,
+            category=form.category.data,
+            github_url=form.github_url.data or None,
+            live_url=form.live_url.data or None,
+            image_url=image_url,
+            featured=form.featured.data,
+            order_priority=form.order_priority.data or 0
+        )
+        
+        db.session.add(project)
+        db.session.commit()
+        
+        flash('Projeto criado com sucesso!', 'success')
+        return redirect(url_for('admin_projects'))
+    
+    return render_template('admin/project_form.html', form=form, title='Novo Projeto')
+
+@app.route('/admin/projects/<int:project_id>/edit', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def admin_edit_project(project_id):
+    """Edit project"""
+    project = Project.query.get_or_404(project_id)
+    form = ProjectForm(obj=project)
+    
+    if form.validate_on_submit():
+        # Handle image upload
+        if form.image.data:
+            # Delete old image if exists
+            if project.image_url:
+                delete_picture(project.image_url)
+            
+            project.image_url = save_picture(form.image.data, 'projects')
+        
+        # Update project fields
+        form.populate_obj(project)
+        project.github_url = form.github_url.data or None
+        project.live_url = form.live_url.data or None
+        
+        db.session.commit()
+        
+        flash('Projeto atualizado com sucesso!', 'success')
+        return redirect(url_for('admin_projects'))
+    
+    return render_template('admin/project_form.html', 
+                         form=form, 
+                         project=project, 
+                         title='Editar Projeto')
+
+@app.route('/admin/projects/<int:project_id>/delete', methods=['POST'])
+@login_required
+@admin_required
+def admin_delete_project(project_id):
+    """Delete project"""
+    project = Project.query.get_or_404(project_id)
+    
+    # Delete associated image
+    if project.image_url:
+        delete_picture(project.image_url)
+    
+    db.session.delete(project)
+    db.session.commit()
+    
+    flash('Projeto excluído com sucesso!', 'success')
+    return redirect(url_for('admin_projects'))
+
+@app.route('/admin/skills')
+@login_required
+@admin_required
+def admin_skills():
+    """Admin skills management"""
+    skills = Skill.query.order_by(Skill.category, Skill.order_priority.desc()).all()
+    return render_template('admin/skills.html', skills=skills)
+
+@app.route('/admin/skills/new', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def admin_new_skill():
+    """Create new skill"""
+    form = SkillForm()
+    
+    if form.validate_on_submit():
+        skill = Skill(
+            name=form.name.data,
+            category=form.category.data,
+            proficiency=form.proficiency.data,
+            icon_class=form.icon_class.data or None,
+            order_priority=form.order_priority.data or 0
+        )
+        
+        db.session.add(skill)
+        db.session.commit()
+        
+        flash('Habilidade criada com sucesso!', 'success')
+        return redirect(url_for('admin_skills'))
+    
+    return render_template('admin/skill_form.html', form=form, title='Nova Habilidade')
+
+@app.route('/admin/skills/<int:skill_id>/edit', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def admin_edit_skill(skill_id):
+    """Edit skill"""
+    skill = Skill.query.get_or_404(skill_id)
+    form = SkillForm(obj=skill)
+    
+    if form.validate_on_submit():
+        form.populate_obj(skill)
+        skill.icon_class = form.icon_class.data or None
+        
+        db.session.commit()
+        
+        flash('Habilidade atualizada com sucesso!', 'success')
+        return redirect(url_for('admin_skills'))
+    
+    return render_template('admin/skill_form.html', 
+                         form=form, 
+                         skill=skill, 
+                         title='Editar Habilidade')
+
+@app.route('/admin/skills/<int:skill_id>/delete', methods=['POST'])
+@login_required
+@admin_required
+def admin_delete_skill(skill_id):
+    """Delete skill"""
+    skill = Skill.query.get_or_404(skill_id)
+    
+    db.session.delete(skill)
+    db.session.commit()
+    
+    flash('Habilidade excluída com sucesso!', 'success')
+    return redirect(url_for('admin_skills'))
 
 @app.route('/admin/users')
 @login_required
@@ -407,14 +627,14 @@ def create_admin_user():
         return "Admin user already exists"
     
     admin = User(
-        username='admin',
-        email='admin@portfolio.com',
-        full_name='Administrator',
+        username='bruna_admin',
+        email='brunabarbozasofia@gmail.com',
+        full_name='Bruna Barboza Sofia',
         is_admin=True
     )
-    admin.set_password('admin123')
+    admin.set_password('Escola00')
     
     db.session.add(admin)
     db.session.commit()
     
-    return "Admin user created! Username: admin, Password: admin123"
+    return "Admin user created! Email: brunabarbozasofia@gmail.com, Password: Escola00"

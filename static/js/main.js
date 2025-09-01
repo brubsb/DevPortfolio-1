@@ -447,3 +447,143 @@ document.addEventListener('DOMContentLoaded', function() {
 
     console.log('💡 Dica: Use Ctrl+Shift+I para explorar o código!');
 });
+
+// ======================================
+// PROJECT INTERACTION FUNCTIONS
+// ======================================
+
+/**
+ * Toggle project like
+ */
+function toggleLike(projectId) {
+    fetch(`/project/${projectId}/like`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+        },
+        credentials: 'same-origin'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.liked !== undefined) {
+            const likeBtn = document.querySelector(`[data-project-id="${projectId}"]`);
+            const likeCount = likeBtn.closest('.portfolio-interactions').querySelector('.like-count');
+            const likeText = likeBtn.querySelector('.like-text');
+            
+            // Update button state
+            if (data.liked) {
+                likeBtn.classList.add('liked');
+                likeText.textContent = 'Descurtir';
+            } else {
+                likeBtn.classList.remove('liked');
+                likeText.textContent = 'Curtir';
+            }
+            
+            // Update like count
+            likeCount.textContent = `${data.likes_count} curtida${data.likes_count !== 1 ? 's' : ''}`;
+            
+            // Add animation effect
+            likeBtn.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                likeBtn.style.transform = 'scale(1)';
+            }, 150);
+        }
+    })
+    .catch(error => {
+        console.error('Erro ao curtir projeto:', error);
+        alert('Erro ao curtir projeto. Tente novamente.');
+    });
+}
+
+// ======================================
+// LOADING ANIMATIONS
+// ======================================
+
+/**
+ * Add loading overlay
+ */
+function showLoading(target = document.body) {
+    if (target.querySelector('.loading-overlay')) return;
+    
+    const overlay = document.createElement('div');
+    overlay.className = 'loading-overlay';
+    overlay.innerHTML = `
+        <div class="loading-spinner">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Carregando...</span>
+            </div>
+        </div>
+    `;
+    
+    target.style.position = 'relative';
+    target.appendChild(overlay);
+}
+
+/**
+ * Remove loading overlay
+ */
+function hideLoading(target = document.body) {
+    const overlay = target.querySelector('.loading-overlay');
+    if (overlay) {
+        overlay.remove();
+    }
+}
+
+// ======================================
+// ENHANCED ANIMATIONS
+// ======================================
+
+/**
+ * Intersection Observer for animations
+ */
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const animationObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('animate-in');
+            
+            // Special animations for different elements
+            if (entry.target.classList.contains('portfolio-card')) {
+                entry.target.style.animationDelay = Math.random() * 0.3 + 's';
+            }
+            
+            if (entry.target.classList.contains('skill-card')) {
+                entry.target.style.animationDelay = Math.random() * 0.2 + 's';
+            }
+        }
+    });
+}, observerOptions);
+
+// Observe elements for animation
+document.querySelectorAll('.portfolio-card, .skill-card, .timeline-item, .stat-card').forEach(el => {
+    animationObserver.observe(el);
+});
+
+// ======================================
+// ADMIN FUNCTIONS
+// ======================================
+
+/**
+ * Confirm delete actions
+ */
+function confirmDelete(message = 'Tem certeza que deseja excluir este item?') {
+    return confirm(message);
+}
+
+/**
+ * Auto-save drafts (for future implementation)
+ */
+function autosaveDraft(formId) {
+    const form = document.getElementById(formId);
+    if (!form) return;
+    
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData);
+    
+    localStorage.setItem(`draft_${formId}`, JSON.stringify(data));
+}
