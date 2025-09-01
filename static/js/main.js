@@ -89,25 +89,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // HERO SECTION EFFECTS
     // ======================================
 
-    /**
-     * Typing animation for hero text
-     */
-    const typingElement = document.querySelector('.typing-text');
-    if (typingElement) {
-        const text = typingElement.getAttribute('data-text');
-        let index = 0;
-        
-        function typeText() {
-            if (index < text.length) {
-                typingElement.textContent = text.slice(0, index + 1);
-                index++;
-                setTimeout(typeText, 100);
-            }
-        }
-        
-        // Start typing animation after a short delay
-        setTimeout(typeText, 1000);
-    }
 
     /**
      * Counter animation for hero stats

@@ -375,7 +375,6 @@
 
     function initializeInteractiveElements() {
         initializeSkillBarAnimations();
-        initializeTypewriterEffect();
         initializeFloatingElements();
     }
 
@@ -419,40 +418,6 @@
         document.head.appendChild(style);
     }
 
-    /**
-     * Enhanced typewriter effect
-     */
-    function initializeTypewriterEffect() {
-        const typewriterElements = document.querySelectorAll('[data-typewriter]');
-
-        typewriterElements.forEach(element => {
-            const text = element.getAttribute('data-typewriter');
-            const speed = parseInt(element.getAttribute('data-speed')) || 100;
-            
-            element.textContent = '';
-            let index = 0;
-
-            function typeChar() {
-                if (index < text.length) {
-                    element.textContent += text.charAt(index);
-                    index++;
-                    setTimeout(typeChar, speed);
-                }
-            }
-
-            // Start typing when element is in view
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        setTimeout(typeChar, 500);
-                        observer.unobserve(entry.target);
-                    }
-                });
-            });
-
-            observer.observe(element);
-        });
-    }
 
     /**
      * Floating elements animation
