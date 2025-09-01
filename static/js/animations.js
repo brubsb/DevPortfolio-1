@@ -49,7 +49,6 @@
 
     function initializeParticleEffects() {
         createFloatingParticles();
-        createMouseFollowEffect();
     }
 
     /**
@@ -100,69 +99,6 @@
         document.head.appendChild(style);
     }
 
-    /**
-     * Mouse follow effect for cursor
-     */
-    function createMouseFollowEffect() {
-        const cursor = document.createElement('div');
-        cursor.className = 'custom-cursor';
-        cursor.style.cssText = `
-            position: fixed;
-            width: 20px;
-            height: 20px;
-            background: rgba(59, 130, 246, 0.3);
-            border: 2px solid rgba(59, 130, 246, 0.8);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            transition: transform 0.1s ease;
-            transform: translate(-50%, -50%);
-        `;
-        document.body.appendChild(cursor);
-
-        const cursorDot = document.createElement('div');
-        cursorDot.className = 'cursor-dot';
-        cursorDot.style.cssText = `
-            position: fixed;
-            width: 4px;
-            height: 4px;
-            background: rgba(59, 130, 246, 1);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 10000;
-            transition: transform 0.05s ease;
-            transform: translate(-50%, -50%);
-        `;
-        document.body.appendChild(cursorDot);
-
-        // Only show custom cursor on desktop
-        if (window.innerWidth > 1024) {
-            document.addEventListener('mousemove', function(e) {
-                cursor.style.left = e.clientX + 'px';
-                cursor.style.top = e.clientY + 'px';
-                cursorDot.style.left = e.clientX + 'px';
-                cursorDot.style.top = e.clientY + 'px';
-            });
-
-            // Cursor interactions
-            const interactiveElements = document.querySelectorAll('a, button, .portfolio-card, .skill-item');
-            
-            interactiveElements.forEach(element => {
-                element.addEventListener('mouseenter', function() {
-                    cursor.style.transform = 'translate(-50%, -50%) scale(1.5)';
-                    cursor.style.background = 'rgba(59, 130, 246, 0.1)';
-                });
-
-                element.addEventListener('mouseleave', function() {
-                    cursor.style.transform = 'translate(-50%, -50%) scale(1)';
-                    cursor.style.background = 'rgba(59, 130, 246, 0.3)';
-                });
-            });
-        } else {
-            cursor.style.display = 'none';
-            cursorDot.style.display = 'none';
-        }
-    }
 
     // ======================================
     // HOVER ANIMATIONS
