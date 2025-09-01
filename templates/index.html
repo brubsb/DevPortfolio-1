@@ -267,7 +267,7 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-12 text-center" data-aos="fade-up">
-                <h2 class="section-title">Portfolio</h2>
+                <h2 class="section-title">Projetos</h2>
                 <p class="section-subtitle">Alguns dos meus projetos mais recentes</p>
             </div>
         </div>
@@ -317,30 +317,36 @@
                         
                         <!-- Project Interactions -->
                         <div class="portfolio-interactions mt-3">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="project-stats">
-                                    <span class="like-count">{{ project.likes_count }} curtida{{ 's' if project.likes_count != 1 else '' }}</span>
+                            <div class="interaction-wrapper">
+                                <div class="project-stats-area">
+                                    <div class="like-display">
+                                        <i class="fas fa-heart text-primary"></i>
+                                        <span class="like-count">{{ project.likes_count }}</span>
+                                        <span class="like-label">curtida{{ 's' if project.likes_count != 1 else '' }}</span>
+                                    </div>
                                 </div>
                                 
                                 {% if current_user.is_authenticated %}
                                 <div class="interaction-buttons">
-                                    <button class="btn btn-sm like-btn {{ 'liked' if project.is_liked_by(current_user) else '' }}" 
+                                    <button class="btn btn-interaction like-btn {{ 'liked' if project.is_liked_by(current_user) else '' }}" 
                                             data-project-id="{{ project.id }}" 
-                                            onclick="toggleLike({{ project.id }})">
+                                            onclick="toggleLike({{ project.id }})"
+                                            data-tooltip="{{ 'Descurtir' if project.is_liked_by(current_user) else 'Curtir' }} projeto">
                                         <i class="fas fa-heart"></i>
-                                        <span class="like-text">{{ 'Descurtir' if project.is_liked_by(current_user) else 'Curtir' }}</span>
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary ms-2" 
+                                    <button class="btn btn-interaction" 
                                             data-bs-toggle="modal" 
-                                            data-bs-target="#commentModal{{ project.id }}">
-                                        <i class="fas fa-comment"></i> Comentar
+                                            data-bs-target="#commentModal{{ project.id }}"
+                                            data-tooltip="Comentar projeto">
+                                        <i class="fas fa-comment"></i>
                                     </button>
                                 </div>
                                 {% else %}
-                                <div class="interaction-info">
-                                    <small class="text-muted">
-                                        <a href="{{ url_for('login') }}" class="text-decoration-none">Faça login</a> para curtir e comentar
-                                    </small>
+                                <div class="login-prompt">
+                                    <div class="login-card">
+                                        <i class="fas fa-user-lock"></i>
+                                        <p>Faça <a href="{{ url_for('login') }}" class="login-link">login</a> para interagir</p>
+                                    </div>
                                 </div>
                                 {% endif %}
                             </div>
@@ -384,56 +390,6 @@
     </div>
 </section>
 
-<!-- Experience Section -->
-<section id="experience" class="experience-section">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12 text-center" data-aos="fade-up">
-                <h2 class="section-title">Experiência</h2>
-                <p class="section-subtitle">Minha trajetória profissional</p>
-            </div>
-        </div>
-        
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="timeline">
-                    {% for experience in experiences %}
-                    <div class="timeline-item" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}">
-                        <div class="timeline-marker"></div>
-                        <div class="timeline-content">
-                            <div class="timeline-header">
-                                <h4 class="timeline-title">{{ experience.position }}</h4>
-                                <h5 class="timeline-company">
-                                    {% if experience.company_url %}
-                                    <a href="{{ experience.company_url }}" target="_blank">{{ experience.company }}</a>
-                                    {% else %}
-                                    {{ experience.company }}
-                                    {% endif %}
-                                </h5>
-                                <div class="timeline-date">
-                                    {{ experience.start_date.strftime('%b %Y') }} - 
-                                    {% if experience.end_date %}
-                                        {{ experience.end_date.strftime('%b %Y') }}
-                                    {% else %}
-                                        Presente
-                                    {% endif %}
-                                </div>
-                                {% if experience.location %}
-                                <div class="timeline-location">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    {{ experience.location }}
-                                </div>
-                                {% endif %}
-                            </div>
-                            <p class="timeline-description">{{ experience.description }}</p>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
 
 <!-- Contact Section -->
 <section id="contact" class="contact-section">

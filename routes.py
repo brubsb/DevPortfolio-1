@@ -81,8 +81,6 @@ def index():
     backend_skills = Skill.query.filter_by(category='backend').order_by(Skill.order_priority.desc()).all()
     tools_skills = Skill.query.filter_by(category='tools').order_by(Skill.order_priority.desc()).all()
     
-    # Get work experience
-    experiences = Experience.query.order_by(Experience.order_priority.desc()).all()
     
     # Create contact form
     contact_form = ContactForm()
@@ -93,7 +91,6 @@ def index():
                          frontend_skills=frontend_skills,
                          backend_skills=backend_skills,
                          tools_skills=tools_skills,
-                         experiences=experiences,
                          contact_form=contact_form)
 
 @app.route('/contact', methods=['POST'])
@@ -180,7 +177,7 @@ def create_sample_data():
                 technologies="React,Node.js,MongoDB,Stripe,Tailwind CSS",
                 github_url="https://github.com/example/ecommerce",
                 live_url="https://ecommerce-demo.com",
-                image_url="https://pixabay.com/get/g8d1feba2d9bf971f47663a7f5d85d4cd9d27bf10c21d4d856b079d57cd0c6d8d1df5fdb443862a2d979a81bd284ad66c8719e66c27d9884faa1292bc13798ead_1280.jpg",
+                image_url="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop",
                 category="fullstack",
                 featured=True,
                 order_priority=10
@@ -192,7 +189,7 @@ def create_sample_data():
                 technologies="Vue.js,Python,Flask,Chart.js,PostgreSQL",
                 github_url="https://github.com/example/dashboard",
                 live_url="https://dashboard-demo.com",
-                image_url="https://pixabay.com/get/g3d14b6a808ac9a9d280afbe399b39fe74a6f1b592c04a1ac99a696223045a637019699c4334173d763d69e6713077b225d48d60762e90d61576c81f93836849b_1280.jpg",
+                image_url="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop",
                 category="frontend",
                 featured=True,
                 order_priority=9
@@ -204,7 +201,7 @@ def create_sample_data():
                 technologies="Node.js,Express,JWT,Redis,Docker",
                 github_url="https://github.com/example/api",
                 live_url="https://api-demo.com/docs",
-                image_url="https://pixabay.com/get/g4cf8983770ff0b80c396f8aed6edf8a722e58c5b774d44b041dbd159ed5a8954cfbde0e8f2d3b26f1f6bf264a51a1d39c22738c4048318f8aede5e6d39bf17d4_1280.jpg",
+                image_url="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&h=600&fit=crop",
                 category="backend",
                 featured=True,
                 order_priority=8
